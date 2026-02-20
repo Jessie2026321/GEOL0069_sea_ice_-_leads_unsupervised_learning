@@ -168,6 +168,8 @@ https://www.mdpi.com/2072-4292/15/2/516
 Jessie So
 Email: jessie.so.25@ucl.ac.uk/ tysojessie321@gmail.com
 
+Project Link: https://github.com/Jessie2026321/GEOL0069_sea_ice_and_leads_unsupervised_learning 
+
 # Acknowledgments 
 This project was developed as part of the GEOL0069 module at University College London. The analysis, notebook, and SAR data are based on the teaching materials provided for Week 4. 
 <p align="right">(<a href="#readme-top">back to top</a>)</p> 
