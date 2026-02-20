@@ -1,6 +1,6 @@
 # GEOL0069 Week 4 Sea Ice & Leads Unsupervised Learning
 
-This week project investigates the use of unsupervised leaning methods to classify radar altimetry echoes from Sentinel-3 altimetry satellite data into sea ice and leads. The notebook linked to this Github page is built on the provided notebook _Chapter1_Unsupervised_Learning_Methods_Michel.ipynb_, and focuses on using Gaussian Mixture Models (GMMs) to identify differences in echo shape. 
+This week project investigates the use of **unsupervised learning methods** to classify radar altimetry echoes from **Sentinel-3 altimetry satellite data** into sea ice and leads. The notebook linked to this Github page is built on the provided notebook _Chapter1_Unsupervised_Learning_Methods_Michel.ipynb_, and focuses on using **Gaussian Mixture Models (GMMs)** to identify differences in echo shape. 
 <br />
 
 # Background
@@ -8,26 +8,28 @@ This week project investigates the use of unsupervised leaning methods to classi
 ### Satellite Altimetry Data
 
 The data used in this project comes from satellite radar altimetry. Radar altimeters operate by transmitting short radar pulses towards the Earth’s surface and recording the signal called echo that is reflected back to the sensor. The time delay and shape of the returned signal provide information about the surface properties.
+<br><br>
+
 <!-- What is an echo? -->
 ### What is an echo? 
+An **echo** (also called a **waveform**) represents the returned radar power as a function of time after transmission. Different surface types interact differently with radar signals, resulting in characteristic echo shapes.
+<br><br>
 
-An echo (also called a waveform) represents the returned radar power as a function of time after transmission. Different surface types interact differently with radar signals, resulting in characteristic echo shapes.
 <!-- Echo Characteristics: Sea Ice vs Leads -->
 ### Echo Characteristics: Sea Ice vs Leads
-
 The shape of an echo depends strongly on surface roughness and reflectivity:
-- Leads (open water):
+- **Leads**:
   - Smoother surface
   - Strong specular reflection
   - Echoes tend to be narrow and sharply peaked
-- Sea ice:
+- **Sea ice**:
   - Rougher and more heterogeneous surface
   - Scattering of the radar signal
   - Echoes are typically broader and noisier
 
-Previous studies show clear differences in waveform shape between sea ice, leads, and open water. Figure 1 (Fig 1.) from the literature (2023) illustrate these characteristic differences and provide physical context for the clustering results.
-![Zhong et al. 2013](Zhong2013.png)
-[Zhong at al.2013](https://www.mdpi.com/2072-4292/15/2/516)
+Previous studies show clear differences in waveform shape between sea ice, leads, and open water. Figure 1 (Fig 1.) from the literature ([Zhong at al., 2013](https://www.mdpi.com/2072-4292/15/2/516)) illustrate these characteristic differences and provide physical context for the clustering results.
+![Zhong et al., 2013](Zhong2013.png)
+
 
 <!-- Unsupervised Learning : Gaussian Mixture Models (GMM) -->
 ### Unsupervised Learning : Gaussian Mixture Models (GMM)
@@ -49,16 +51,17 @@ GMMs are well suited for this task because they can model overlapping clusters a
 ### Overview
 This project follows a waveform-based unsupervised classification workflow to distinguish sea ice and leads using Sentinel-3 SAR altimetry data. Radar waveforms are first transformed into physically meaningful features that describe echo shape and surface scattering behaviour. These features are then clustered using a Gaussian Mixture Model (GMM) to identify natural groupings in the data. Finally, the clustering results are interpreted through waveform shape analysis and compared with the ESA surface-type classification for validation.
 
-1. [Envionrment Set Up](#envionment-set-up)
-2. [Loading Sentiminel-3 SAR Data](#loading-Sentiminel-3-SAR-Data)
+1. [Environment Set Up](#environment-set-up)
+2. [Loading Sentinel-3 SAR Data](#loading-Sentinel-3-SAR-Data)
 3. [Extracting Waveform Features from Radar Echoes](#Extracting-Waveform-Features-from-Radar-Echoes)
 4. [Data Cleaning and Filtering](#Data-Cleaning-and-Filtering)
 5. [Applying GMM Clustering](#Applying-GMM-Clustering)
 6. [Result Interpretation ](#Result-Interpretation )
 7. [Comparison with ESA Classification](#Comparison-with-ESA-Classification)
+<br><br>
 
-<!-- Envionrment Set Up -->  
-## 1. Envionrment Set Up
+<!-- Environment Set Up -->  
+## 1. Environment Set Up
 Install software packages
 ```sh
 ! pip install rasterio
@@ -70,18 +73,22 @@ Mount Google Drive on Google Colab
 from google.colab import drive
 drive.mount('/content/drive')
   ```
-<!-- Loading Sentiminel-3 SAR Data -->
-## 2. Loading Sentiminel-3 SAR Data
+<br><br>
+
+<!-- Loading Sentinel-3 SAR Data -->
+## 2. Loading Sentinel-3 SAR Data
 The Sentinel-3 SAR data are loaded from the _enhanced_measurement.nc_ file, which contains waveform information required for echo analysis.
 ```sh
 SAR_data = Dataset(path + SAR_file + '/enhanced_measurement.nc')
   ```
+<br><br>
+
 <!-- Extracting Waveform Features from Radar Echoes -->
 ## 3. Extracting Waveform Features from Radar Echoes
 Each echo is described using scalar features:
-- σ<sup>0</sup> (Backscatter Coefficient): radar backscatter strength
-- PP (Peak Power): measures how sharp or peaked the echo is
-- SSD(Surface Scattering Density): measures waveform shape variability
+- **σ<sup>0</sup>** (Backscatter Coefficient): radar backscatter strength
+- **PP (Peak Power)**: measures how sharp or peaked the echo is
+- **SSD(Surface Scattering Density)**: measures waveform shape variability
 
 These features capture differences in surface roughness between echoes, 
 ```sh
@@ -94,6 +101,8 @@ then standarised before clustering.
 scaler = StandardScaler()
 data_normalized = scaler.fit_transform(data)
   ```
+<br><br>
+
 <!-- Data Cleaning and Filtering -->
 ## 4. Data Cleaning and Filtering
 Only echoes classified by ESA as either sea ice or leads are retained. Other surface types are removed. 
@@ -111,6 +120,8 @@ data_cleaned = data_cleaned[(flag_cleaned==1)|(flag_cleaned==2)]
 waves_cleaned = waves_cleaned[(flag_cleaned==1)|(flag_cleaned==2)]
 flag_cleaned = flag_cleaned[(flag_cleaned==1)|(flag_cleaned==2)]
   ```
+<br><br>
+
 <!-- Applying GMM Clustering -->
 ## 5. Applying GMM Clustering
 The model assigns each echo to the most likely Gaussian distribution without using surface labels. 
@@ -122,7 +133,9 @@ clusters_gmm = gmm.predict(data_cleaned[(flag_cleaned==1)|(flag_cleaned==2)])
 ![](gmm1.png)
 Fig 2: _GMM clustering in feature space (σ<sup>0</sup> vs pp)._
 
-This figure shows that echoes occupy two distinct regions σ<sup>0</sup> and PP suggiesting two dominant surface scattering regimes.
+This figure shows that echoes occupy two distinct regions σ<sup>0</sup> and PP suggesting **two dominant surface scattering regimes**.
+<br><br>
+
 <!-- Result Interpretation -->
 ## 6. Result Interpretation
 For each GMM cluster, the mean waveform and its standard deviation are calculated to characterise typical echo shape and variability. 
@@ -136,25 +149,27 @@ std_lead = np.std(waves_cleaned[clusters_gmm==1], axis=0)
 ![](mean&sd.png)
 Fig 3: _Mean and Standard Deviation for Both Class_
 
-This figure shows that one class has a narrow, shar-peaked waveform characteristic of leads, while other shows boarder, noisier echoes typical of sea ice. This confirms that GMM clusters correspond to physical suface types. 
+This figure shows that one class has a narrow, sharp-peaked waveform characteristic of leads, while the other shows broader, noisier echoes typical of sea ice. This confirms that GMM clusters correspond to physical surface types. 
+<br><br>
 
 ## 7. Comparison with ESA Classification
-Even ESA labels were not used during clustering, but they still provide reference for evaluation. A confusion matrix compares GMM cluster with eSA classifications. 
+Even though ESA labels were not used during clustering, but they still provide reference for evaluation. A confusion matrix compares GMM cluster with ESA classifications. 
 
 ![](con_mat.png)
 Fig 4: _Confusion matrix: GMM vs ESA classification_
 
-The matrix shows the unsupervised GMM results and the operational eSA classification are aligned which indicate that the clustering successfully captures real surface differences. 
+The matrix shows the unsupervised GMM results and the operational ESA classification are aligned which indicates that the clustering successfully captures real surface differences. 
 <p align="right">(<a href="#readme-top">back to top</a>)</p> 
 
 # References 
 Zhong, W., Jiang, M., Xu, K., & Jia, Y. (2023). Arctic sea ice lead detection from Chinese HY-2B radar altimeter data. Remote Sensing, 15(2), 516.
 https://www.mdpi.com/2072-4292/15/2/516
 # Contact
-Jessie So: jessie.so.25@ucl.ac.uk/ tysojessie321@gmail.com
+Jessie So
+Email: jessie.so.25@ucl.ac.uk/ tysojessie321@gmail.com
 
 # Acknowledgments 
-This project was developed as part of the GEOL0069 modeule at University College London. The analysis, notebook, and SAR data are based on the teaching materials provided for Week 4. 
+This project was developed as part of the GEOL0069 module at University College London. The analysis, notebook, and SAR data are based on the teaching materials provided for Week 4. 
 <p align="right">(<a href="#readme-top">back to top</a>)</p> 
 
 
