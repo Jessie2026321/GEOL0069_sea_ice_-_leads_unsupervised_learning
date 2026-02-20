@@ -87,8 +87,8 @@ SAR_data = Dataset(path + SAR_file + '/enhanced_measurement.nc')
 ## 3. Extracting Waveform Features from Radar Echoes
 Each echo is described using scalar features:
 - **σ<sup>0</sup>** (Backscatter Coefficient): radar backscatter strength
-- **PP (Peak Power)**: measures how sharp or peaked the echo is
-- **SSD(Surface Scattering Density)**: measures waveform shape variability
+- **PP** (Peak Power): measures how sharp or peaked the echo is
+- **SSD**(Surface Scattering Density): measures waveform shape variability
 
 These features capture differences in surface roughness between echoes, 
 ```sh
@@ -133,7 +133,7 @@ clusters_gmm = gmm.predict(data_cleaned[(flag_cleaned==1)|(flag_cleaned==2)])
 ![](gmm1.png)
 Fig 2: _GMM clustering in feature space (σ<sup>0</sup> vs pp)._
 
-This figure shows that echoes occupy two distinct regions σ<sup>0</sup> and PP suggesting **two dominant surface scattering regimes**.
+This figure shows that echoes occupy two distinct regions (σ<sup>0</sup> and PP), suggesting **two dominant surface scattering regimes**.
 <br><br>
 
 <!-- Result Interpretation -->
